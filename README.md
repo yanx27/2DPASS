@@ -124,7 +124,7 @@ Here, `num_vote` is the number of views for the test-time-augmentation (TTA). We
 
 ## Model Zoo
 You can download the models with the scores below from [this Google drive folder](https://drive.google.com/drive/folders/1Xy6p_h827lv8J-2iZU8T6SLFkxfoXPBE?usp=sharing).
-|Model (validation)|Reported|Reproduced|Parameters|
+|Model (validation)|Reported (mIoU)|Reproduced (mIoU)|Parameters|
 |:---:|:---:|:---:|:---:|
 |2DPASS-SemanticKITTI|69.3%|70.0%|1.9M|
 |2DPASS-NuScenes|79.4%|79.5%|45.6M|
