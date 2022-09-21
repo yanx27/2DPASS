@@ -53,10 +53,10 @@ If you find our work useful in your research, please consider citing:
 ### SemanticKITTI
 Please download the files from the [SemanticKITTI website](http://semantic-kitti.org/dataset.html) and additionally the [color data](http://www.cvlibs.net/download.php?file=data_odometry_color.zip) from the [Kitti Odometry website](http://www.cvlibs.net/datasets/kitti/eval_odometry.php). Extract everything into the same folder.
 ```
-./
+./dataset/
 ├── 
 ├── ...
-└── dataset/
+└── SemanticKitti/
     ├──sequences
         ├── 00/           
         │   ├── velodyne/	
@@ -81,10 +81,10 @@ Please download the files from the [SemanticKITTI website](http://semantic-kitti
 ### NuScenes
 Please download the Full dataset (v1.0) from the [NuScenes website](https://www.nuscenes.org/) and extract it.
 ```
-./
+./dataset/
 ├── 
 ├── ...
-└── dataset/
+└── nuscenes/
     ├──v1.0-trainval
     ├──v1.0-test
     ├──samples
