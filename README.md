@@ -79,7 +79,7 @@ Please download the files from the [SemanticKITTI website](http://semantic-kitti
 ```
 
 ### NuScenes
-Please download the Full dataset (v1.0) from the [NuScenes website](https://www.nuscenes.org/) and extract it.
+Please download the Full dataset (v1.0) from the [NuScenes website](https://www.nuscenes.org/) with lidarseg and extract it.
 ```
 ./dataset/
 ├── 
@@ -90,7 +90,7 @@ Please download the Full dataset (v1.0) from the [NuScenes website](https://www.
     ├──samples
     ├──sweeps
     ├──maps
-
+    ├──lidarseg
 ```
 
 ## Training
