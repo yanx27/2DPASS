@@ -51,6 +51,7 @@ If you find our work useful in your research, please consider citing:
 - pytorch >= 1.8 
 - yaml
 - easydict
+- pyquaternion
 - [lightning](https://github.com/Lightning-AI/lightning) (tested with pytorch_lightning==1.3.8 and torchmetrics==0.5)
 - [torch-scatter](https://github.com/rusty1s/pytorch_scatter) (pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html)
 - [nuScenes-devkit](https://github.com/nutonomy/nuscenes-devkit) (optional for nuScenes)
