@@ -3,7 +3,7 @@
 
 # 2DPASS
 
-[![arXiv](https://img.shields.io/badge/arXiv-2203.09065-b31b1b.svg)](https://arxiv.org/pdf/2207.04397v2.pdf)
+[![arXiv](https://img.shields.io/badge/arXiv-2203.09065-b31b1b.svg)](https://arxiv.org/pdf/2207.04397.pdf)
 [![GitHub Stars](https://img.shields.io/github/stars/yanx27/2DPASS?style=social)](https://github.com/yanx27/2DPASS)
 ![visitors](https://visitor-badge.glitch.me/badge?page_id=https://github.com/yanx27/2DPASS)
 
@@ -11,7 +11,7 @@
 
 This repository is for **2DPASS** introduced in the following paper
 
-[Xu Yan*](https://yanx27.github.io/), [Jiantao Gao*](https://github.com/Gao-JT), [Chaoda Zheng*](https://github.com/Ghostish), Chao Zheng, Ruimao Zhang, Shuguang Cui, [Zhen Li*](https://mypage.cuhk.edu.cn/academics/lizhen/), "*2DPASS: 2D Priors Assisted Semantic Segmentation on LiDAR Point Clouds*", ECCV 2022 [[arxiv]](https://arxiv.org/pdf/2207.04397v2.pdf).
+[Xu Yan*](https://yanx27.github.io/), [Jiantao Gao*](https://github.com/Gao-JT), [Chaoda Zheng*](https://github.com/Ghostish), Chao Zheng, Ruimao Zhang, Shuguang Cui, [Zhen Li*](https://mypage.cuhk.edu.cn/academics/lizhen/), "*2DPASS: 2D Priors Assisted Semantic Segmentation on LiDAR Point Clouds*", ECCV 2022 [[arxiv]](https://arxiv.org/pdf/2207.04397.pdf).
  ![image](figures/2DPASS.gif)
 
 If you find our work useful in your research, please consider citing:
@@ -138,7 +138,7 @@ You can download the models with the scores below from [this Google drive folder
 |2DPASS-SemanticKITTI|69.3%|70.0%|1.9M|
 |2DPASS-NuScenes|79.4%|79.5%|45.6M|
 
-Here, we train the model for SemanticKITTI with more epochs and thus gain the higher mIoU. Note that the results on benchmarks are gained by training with additional validation set and using instance-level augmentation.
+Here, we train the model for SemanticKITTI with more epochs and thus gain the higher mIoU. **Note that the results on benchmarks are gained by training with additional validation set and using instance-level augmentation.**
 
 ## Acknowledgements
 Code is built based on [SPVNAS](https://github.com/mit-han-lab/spvnas), [Cylinder3D](https://github.com/xinge008/Cylinder3D), [xMUDA](https://github.com/valeoai/xmuda) and [SPCONV](https://github.com/traveller59/spconv).
