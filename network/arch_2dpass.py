@@ -81,50 +81,54 @@ class xModalKD(nn.Module):
         lovasz_loss = self.lovasz_loss(F.softmax(logits, dim=1), labels)
         return ce_loss + lovasz_loss
 
+    def fusion_to_single_KD(self, data_dict, idx):
+        batch_idx = data_dict['batch_idx']
+        point2img_index = data_dict['point2img_index']
+        last_scale = self.scale_list[idx - 1] if idx > 0 else 1
+        img_feat = data_dict['img_scale{}'.format(self.scale_list[idx])]
+        pts_feat = data_dict['layer_{}'.format(idx)]['pts_feat']
+        coors_inv = data_dict['scale_{}'.format(last_scale)]['coors_inv']
+
+        # 3D prediction
+        pts_pred_full = self.multihead_3d_classifier[idx](pts_feat)
+
+        # correspondence
+        pts_label_full = self.voxelize_labels(data_dict['labels'], data_dict['layer_{}'.format(idx)]['full_coors'])
+        pts_feat = self.p2img_mapping(pts_feat[coors_inv], point2img_index, batch_idx)
+        pts_pred = self.p2img_mapping(pts_pred_full[coors_inv], point2img_index, batch_idx)
+
+        # modality fusion
+        feat_learner = F.relu(self.leaners[idx](pts_feat))
+        feat_cat = torch.cat([img_feat, feat_learner], 1)
+        feat_cat = self.fcs1[idx](feat_cat)
+        feat_weight = torch.sigmoid(self.fcs2[idx](feat_cat))
+        fuse_feat = F.relu(feat_cat * feat_weight)
+
+        # fusion prediction
+        fuse_pred = self.multihead_fuse_classifier[idx](fuse_feat)
+
+        # Segmentation Loss
+        seg_loss_3d = self.seg_loss(pts_pred_full, pts_label_full)
+        seg_loss_2d = self.seg_loss(fuse_pred, data_dict['img_label'])
+        loss = seg_loss_3d + seg_loss_2d * self.lambda_seg2d / self.num_scales
+
+        # KL divergence
+        xm_loss = F.kl_div(
+            F.log_softmax(pts_pred, dim=1),
+            F.softmax(fuse_pred.detach(), dim=1),
+        )
+        loss += xm_loss * self.lambda_xm / self.num_scales
+
+        return loss, fuse_feat
+
     def forward(self, data_dict):
         loss = 0
         img_seg_feat = []
-        batch_idx = data_dict['batch_idx']
-        point2img_index = data_dict['point2img_index']
 
-        for idx, scale in enumerate(self.scale_list):
-            img_feat = data_dict['img_scale{}'.format(scale)]
-            pts_feat = data_dict['layer_{}'.format(idx)]['pts_feat']
-            coors_inv = data_dict['scale_{}'.format(scale)]['coors_inv']
-
-            # 3D prediction
-            pts_pred_full = self.multihead_3d_classifier[idx](pts_feat)
-
-            # correspondence
-            pts_label_full = self.voxelize_labels(data_dict['labels'], data_dict['layer_{}'.format(idx)]['full_coors'])
-            pts_feat = self.p2img_mapping(pts_feat[coors_inv], point2img_index, batch_idx)
-            pts_pred = self.p2img_mapping(pts_pred_full[coors_inv], point2img_index, batch_idx)
-
-            # modality fusion
-            feat_learner = self.leaners[idx](pts_feat)
-            feat_learner = F.relu(feat_learner)
-            feat_cat = torch.cat([img_feat, feat_learner], 1)
-            feat_cat = self.fcs1[idx](feat_cat)
-
-            feat_weight = torch.sigmoid(self.fcs2[idx](feat_cat))
-            feat_cat = F.relu(feat_cat * feat_weight)
-
-            # fusion prediction
-            fuse_pred = feat_cat + img_feat
-            img_seg_feat.append(fuse_pred)
-            fuse_pred = self.multihead_fuse_classifier[idx](fuse_pred)
-
-            # Segmentation Loss
-            seg_loss_3d = self.seg_loss(pts_pred_full, pts_label_full)
-            seg_loss_2d = self.seg_loss(fuse_pred, data_dict['img_label'])
-            loss += seg_loss_3d + seg_loss_2d * self.lambda_seg2d / self.num_scales
-
-            # KL divergence
-            xm_loss = F.kl_div(
-                F.log_softmax(pts_pred, dim=1),
-                F.softmax(fuse_pred, dim=1),
-            )
-            loss += xm_loss * self.lambda_xm / self.num_scales
+        for idx in range(self.num_scales):
+            singlescale_loss, fuse_feat = self.fusion_to_single_KD(data_dict, idx)
+            img_seg_feat.append(fuse_feat)
+            loss += singlescale_loss
 
         img_seg_logits = self.classifier(torch.cat(img_seg_feat, 1))
         loss += self.seg_loss(img_seg_logits, data_dict['img_label'])
