@@ -16,11 +16,13 @@ This repository is for **2DPASS** introduced in the following paper
 
 If you find our work useful in your research, please consider citing:
 ```latex
-@InProceedings{yan20222dpass,
-      title={2DPASS: 2D Priors Assisted Semantic Segmentation on LiDAR Point Clouds}, 
-      author={Xu Yan and Jiantao Gao and Chaoda Zheng and Chao Zheng and Ruimao Zhang and Shuguang Cui and Zhen Li},
-      year={2022},
-      booktitle={ECCV}
+@inproceedings{yan20222dpass,
+  title={2dpass: 2d priors assisted semantic segmentation on lidar point clouds},
+  author={Yan, Xu and Gao, Jiantao and Zheng, Chaoda and Zheng, Chao and Zhang, Ruimao and Cui, Shuguang and Li, Zhen},
+  booktitle={European Conference on Computer Vision},
+  pages={677--695},
+  year={2022},
+  organization={Springer}
 }
 
 @InProceedings{yan2022let,
