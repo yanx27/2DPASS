@@ -33,7 +33,9 @@ If you find our work useful in your research, please consider citing:
 }
 ```
 ## News
-* **2022-10-11**  Our new work for cross-modal knowledge distillation is accepted at NeurIPS 2022:smiley: ([here](https://arxiv.org/pdf/2210.04208.pdf)).
+* **2023-03-27** We release a model with higher performance on SemanticKITTI and codes for naive instance augmentation.
+* **2023-02-25** We release a new robustness benchmark for LiDAR semantic segmentation at [SemanticKITTI-C](https://yanx27.github.io/RobustLidarSeg/). Welcome to test your models!
+* **2022-10-11** Our new work for cross-modal knowledge distillation is accepted at NeurIPS 2022:smiley: ([here](https://arxiv.org/pdf/2210.04208.pdf)).
 * **2022-09-20** We release codes for SemanticKITTI single-scan and NuScenes :rocket:!
 * **2022-07-03** 2DPASS is accepted at **ECCV 2022** :fire:!
 * **2022-03-08** We achieve **1st** place in both single and multi-scans of [SemanticKITTI](http://semantic-kitti.org/index.html) and **3rd** place on [NuScenes-lidarseg](https://www.nuscenes.org/) :fire:! 
@@ -139,8 +141,9 @@ You can download the models with the scores below from [this Google drive folder
 |Model (validation)|mIoU (vanilla)|mIoU (TTA)|Parameters|
 |:---:|:---:|:---:|:---:|
 |2DPASS (4scale-64dimension)|68.7%|70.0%|1.9M|
+|2DPASS (6scale-256dimension)|70.7%|72.0%|45.6M|
 
-Here, we fine-tune the model on SemanticKITTI with more epochs and thus gain the higher mIoU. If you train with 64 epochs, it should be gained about 66% for vanilla and 69% after TTA.
+Here, we fine-tune the model on SemanticKITTI with more epochs and thus gain the higher mIoU. If you train with 64 epochs, it should be gained about 66%/69% for vanilla and 69%/71% after TTA.
 
 ### NuScenes
 |Model (validation)|mIoU (vanilla)|mIoU (TTA)|Parameters|
