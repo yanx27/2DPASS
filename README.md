@@ -31,11 +31,19 @@ If you find our work useful in your research, please consider citing:
       year={2022},
       booktitle={NeurIPS}
 }
+
+@article{yan2023benchmarking,
+  title={Benchmarking the Robustness of LiDAR Semantic Segmentation Models},
+  author={Yan, Xu and Zheng, Chaoda and Li, Zhen and Cui, Shuguang and Dai, Dengxin},
+  journal={arXiv preprint arXiv:2301.00970},
+  year={2023}
+}
 ```
 ## News
+* **2023-03-31** We provide codes for the robustness evaluation on SemanticKITTI-C.
 * **2023-03-27** We release a model with higher performance on SemanticKITTI and codes for naive instance augmentation.
 * **2023-02-25** We release a new robustness benchmark for LiDAR semantic segmentation at [SemanticKITTI-C](https://yanx27.github.io/RobustLidarSeg/). Welcome to test your models!
-* **2022-10-11** Our new work for cross-modal knowledge distillation is accepted at NeurIPS 2022:smiley: ([here](https://arxiv.org/pdf/2210.04208.pdf)).
+* **2022-10-11** Our new work for cross-modal knowledge distillation is accepted at NeurIPS 2022:smiley: [paper](https://arxiv.org/pdf/2210.04208.pdf) / [code](https://github.com/ZhanHeshen/PointCMT).
 * **2022-09-20** We release codes for SemanticKITTI single-scan and NuScenes :rocket:!
 * **2022-07-03** 2DPASS is accepted at **ECCV 2022** :fire:!
 * **2022-03-08** We achieve **1st** place in both single and multi-scans of [SemanticKITTI](http://semantic-kitti.org/index.html) and **3rd** place on [NuScenes-lidarseg](https://www.nuscenes.org/) :fire:! 
@@ -134,6 +142,33 @@ cd <root dir of this repo>
 python main.py --config config/2DPASS-semantickitti.yaml --gpu 0 --test --num_vote 12 --checkpoint <dir for the pytorch checkpoint>
 ```
 Here, `num_vote` is the number of views for the test-time-augmentation (TTA). We set this value to 12 as default (on a Tesla-V100 GPU), and if you use other GPUs with smaller memory, you can choose a smaller value. `num_vote=1` denotes there is no TTA used, and will cause about ~2\% performance drop.
+
+## Robustness Evaluation
+Please download all subsets of SemanticKITTI-C from [this link](https://cuhko365-my.sharepoint.com/personal/218012048_link_cuhk_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F218012048%5Flink%5Fcuhk%5Fedu%5Fcn%2FDocuments%2FSemanticKITTIC&ga=1) and extract them.
+```
+./dataset/
+├── 
+├── ...
+└── SemanticKitti/
+    ├──sequences
+    ├──SemanticKITTI-C
+        ├── clean_data/           
+        ├── dense_16beam/           
+        │   ├── velodyne/	
+        |   |	├── 000000.bin
+        |   |	├── 000001.bin
+        |   |	└── ...
+        │   └── labels/ 
+        |   |   ├── 000000.label
+        |   |   ├── 000001.label
+        |   |   └── ...
+	    ...
+```
+You can run the robustness evaluation with
+```shell script
+cd <root dir of this repo>
+python robust_test.py --config config/2DPASS-semantickitti.yaml --gpu 0  --num_vote 12 --checkpoint <dir for the pytorch checkpoint>
+```
 
 ## Model Zoo
 You can download the models with the scores below from [this Google drive folder](https://drive.google.com/drive/folders/1Xy6p_h827lv8J-2iZU8T6SLFkxfoXPBE?usp=sharing).

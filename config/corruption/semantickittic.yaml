@@ -1,0 +1,21 @@
+corruption_name:
+  - clean_data
+  - fog_light
+  - fog_moderate
+  - fog_heavy
+  - snowfall_light
+  - snowfall_moderate
+  - snowfall_heavy
+  - local_light
+  - local_moderate
+  - local_heavy
+  - global_light
+  - global_moderate
+  - global_heavy
+  - dense_32beam
+  - sparse_32beam
+  - dense_16beam
+  - sparse_16beam
+
+
+
