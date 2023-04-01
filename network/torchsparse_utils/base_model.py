@@ -247,8 +247,6 @@ class LightningBaseModel(pl.LightningModule):
                     json.dump(meta_dict, f)
                 original_label = prediction.cpu().numpy().astype(np.uint8)
 
-                # TODO why label 0?
-                # original_label[original_label == 0] = 11
                 assert all((original_label > 0) & (original_label < 17)), \
                     "Error: Array for predictions must be between 1 and 16 (inclusive)."
 
