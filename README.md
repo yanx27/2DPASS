@@ -44,6 +44,11 @@ If you find our work useful in your research, please consider citing:
 * **2023-03-31** We provide codes for the robustness evaluation on SemanticKITTI-C.
 * **2023-03-27** We release a model with higher performance on SemanticKITTI and codes for naive instance augmentation.
 * **2023-02-25** We release a new robustness benchmark for LiDAR semantic segmentation at [SemanticKITTI-C](https://yanx27.github.io/RobustLidarSeg/). Welcome to test your models!
+<p align="center">
+   <img src="figures/semantickittic.png" width="80%"> 
+</p>
+
+
 * **2022-10-11** Our new work for cross-modal knowledge distillation is accepted at NeurIPS 2022:smiley: [paper](https://arxiv.org/pdf/2210.04208.pdf) / [code](https://github.com/ZhanHeshen/PointCMT).
 * **2022-09-20** We release codes for SemanticKITTI single-scan and NuScenes :rocket:!
 * **2022-07-03** 2DPASS is accepted at **ECCV 2022** :fire:!
