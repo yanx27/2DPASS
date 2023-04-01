@@ -1,0 +1,91 @@
+# Config format schema number
+format_version: 2
+
+
+###################
+## Model options
+model_params:
+  model_architecture: "minkowskinet"
+
+  input_dims: 4
+  voxel_size: 0.05
+  cr: 1  # enlarge factor of layer_num
+  layer_num:
+    - 32
+    - 32
+    - 64
+    - 128
+    - 256
+    - 256
+    - 128
+    - 96
+    - 96
+
+  num_class: 20
+
+
+###################
+## Dataset options
+dataset_params:
+  training_size: 19132
+  dataset_type: "voxel_dataset"
+  pc_dataset_type: "SemanticKITTI"
+  collate_type: "collate_fn_voxel"
+  ignore_label: 0
+  label_mapping: "./config/label_mapping/semantic-kitti.yaml"
+
+  seg_labelweights:
+    - 0
+    - 55437630
+    - 320797
+    - 541736
+    - 2578735
+    - 3274484
+    - 552662
+    - 184064
+    - 78858
+    - 240942562
+    - 17294618
+    - 170599734
+    - 6369672
+    - 230413074
+    - 101130274
+    - 476491114
+    - 9833174
+    - 129609852
+    - 4506626
+    - 1168181
+
+  train_data_loader:
+    data_path: "./dataset/SemanticKitti/dataset/sequences/"
+    batch_size: 8
+    shuffle: True
+    num_workers: 8
+    rotate_aug: True
+    flip_aug: True
+    scale_aug: True
+    transform_aug: True
+    dropout_aug: True
+
+  val_data_loader:
+    data_path: "./dataset/SemanticKitti/dataset/sequences/"
+    shuffle: False
+    num_workers: 8
+    batch_size: 8
+    rotate_aug: False
+    flip_aug: False
+    scale_aug: False
+    transform_aug: False
+    dropout_aug: False
+
+
+###################
+## Train params
+train_params:
+  max_num_epochs: 64
+  learning_rate: 2.4e-1
+  optimizer: SGD  # [SGD, Adam]
+  lr_scheduler: CosineAnnealingWarmRestarts  # [StepLR, ReduceLROnPlateau, CosineAnnealingLR, CosineAnnealingWarmRestarts]
+  momentum: 0.9
+  nesterov: True
+  weight_decay: 1.0e-4

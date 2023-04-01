@@ -1,0 +1,68 @@
+# Config format schema number
+format_version: 1
+
+
+###################
+## Model options
+model_params:
+  model_architecture: "spvcnn"
+
+  input_dims: 4
+  voxel_size: 0.05
+  cr: 1  # enlarge factor of layer_num
+  layer_num:
+    - 32
+    - 32
+    - 64
+    - 128
+    - 256
+    - 256
+    - 128
+    - 96
+    - 96
+
+  num_class: 17
+
+
+###################
+## Dataset options
+dataset_params:
+  dataset_type: "voxel_dataset"
+  pc_dataset_type: "nuScenes"
+  collate_type: "collate_fn_voxel"
+  ignore_label: 0
+  label_mapping: "./config/label_mapping/nuscenes.yaml"
+
+  train_data_loader:
+    data_path: "./dataset/nuscenes/"
+    batch_size: 32
+    shuffle: True
+    num_workers: 8
+    rotate_aug: True
+    flip_aug: True
+    scale_aug: True
+    transform_aug: True
+    dropout_aug: True
+
+  val_data_loader:
+    data_path: "./dataset/nuscenes/"
+    shuffle: False
+    num_workers: 8
+    batch_size: 32
+    rotate_aug: False
+    flip_aug: False
+    scale_aug: False
+    transform_aug: False
+    dropout_aug: False
+
+
+###################
+## Train params
+train_params:
+  max_num_epochs: 80
+  learning_rate: 2.4e-1
+  optimizer: SGD  # [SGD, Adam]
+  lr_scheduler: CosineAnnealingLR  # [StepLR, ReduceLROnPlateau, CosineAnnealingLR, CosineAnnealingWarmRestarts]
+  momentum: 0.9
+  nesterov: True
+  weight_decay: 1.0e-4

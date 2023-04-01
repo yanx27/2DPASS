@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from network.basic_block import Lovasz_loss
-from network.spvcnn import get_model as SPVCNN
+from network.baseline import get_model as SPVCNN
 from network.base_model import LightningBaseModel
 from network.basic_block import ResNetFCN
 

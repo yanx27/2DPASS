@@ -14,6 +14,13 @@ from nuscenes.utils.geometry_utils import view_points
 REGISTERED_DATASET_CLASSES = {}
 REGISTERED_COLATE_CLASSES = {}
 
+try:
+    from torchsparse import SparseTensor
+    from torchsparse.utils.collate import sparse_collate_fn
+    from torchsparse.utils.quantize import sparse_quantize
+except:
+    print('please install torchsparse if you want to run spvcnn/minkowskinet!')
+
 
 def register_dataset(cls, name=None):
     global REGISTERED_DATASET_CLASSES
@@ -483,7 +490,6 @@ class point_image_dataset_mix_semkitti(data.Dataset):
         return cutmix_data_dict
 
 
-
 @register_dataset
 class point_image_dataset_nus(data.Dataset):
     def __init__(self, in_dataset, config, loader_config, num_vote=1, trans_std=[0.1, 0.1, 0.1], max_dropout_ratio=0.2):
@@ -693,6 +699,115 @@ class point_image_dataset_nus(data.Dataset):
         return data_dict
 
 
+@register_dataset
+class voxel_dataset(data.Dataset):
+    def __init__(self, in_dataset, config, loader_config, num_vote=1, trans_std=[0.1, 0.1, 0.1], max_dropout_ratio=0.2):
+        'Initialization'
+        self.point_cloud_dataset = in_dataset
+        self.config = config
+        self.ignore_label = config['dataset_params']['ignore_label']
+        self.rotate_aug = loader_config['rotate_aug']
+        self.flip_aug = loader_config['flip_aug']
+        self.transform = loader_config['transform_aug']
+        self.scale_aug = loader_config['scale_aug']
+        self.dropout = loader_config['dropout_aug']
+        self.voxel_size = config['model_params']['voxel_size']
+        self.num_vote = num_vote
+        self.trans_std = trans_std
+        self.max_dropout_ratio = max_dropout_ratio
+        self.debug = config['debug']
+
+    def __len__(self):
+        'Denotes the total number of samples'
+        if self.debug:
+            return 100 * self.num_vote
+        else:
+            return len(self.point_cloud_dataset)
+
+
+    def __getitem__(self, index):
+        'Generates one sample of data'
+        data, root = self.point_cloud_dataset[index]
+
+        xyz = data['xyz']
+        labels = data['labels']
+        sig = data['signal']
+        origin_len = data['origin_len']
+
+        # random data augmentation by rotation
+        if self.rotate_aug:
+            rotate_rad = np.deg2rad(np.random.random() * 360)
+            c, s = np.cos(rotate_rad), np.sin(rotate_rad)
+            j = np.matrix([[c, s], [-s, c]])
+            xyz[:, :2] = np.dot(xyz[:, :2], j)
+
+        # random data augmentation by flip x , y or x+y
+        if self.flip_aug:
+            flip_type = np.random.choice(4, 1)
+            if flip_type == 1:
+                xyz[:, 0] = -xyz[:, 0]
+            elif flip_type == 2:
+                xyz[:, 1] = -xyz[:, 1]
+            elif flip_type == 3:
+                xyz[:, :2] = -xyz[:, :2]
+
+        if self.scale_aug:
+            noise_scale = np.random.uniform(0.95, 1.05)
+            xyz[:, 0] = noise_scale * xyz[:, 0]
+            xyz[:, 1] = noise_scale * xyz[:, 1]
+
+        if self.transform:
+            noise_translate = np.array([np.random.normal(0, self.trans_std[0], 1),
+                                        np.random.normal(0, self.trans_std[1], 1),
+                                        np.random.normal(0, self.trans_std[2], 1)]).T
+
+            xyz[:, 0:3] += noise_translate
+
+        if self.dropout and self.point_cloud_dataset.imageset == 'train':
+            dropout_ratio = np.random.random() * self.max_dropout_ratio
+            drop_idx = np.where(np.random.random((xyz.shape[0])) <= dropout_ratio)[0]
+
+            if len(drop_idx) > 0:
+                xyz[drop_idx, :] = xyz[0, :]
+                labels[drop_idx, :] = labels[0, :]
+                sig[drop_idx, :] = sig[0, :]
+
+        ref_pc = xyz.copy()
+        ref_labels = labels.copy()
+        ref_index = np.arange(len(ref_pc))
+        pc_ = np.round(xyz / self.voxel_size)
+        pc_ = pc_ - pc_.min(0, keepdims=1)
+        feat_ = np.concatenate((xyz, sig), axis=1)
+
+        _, inds, inverse_map = sparse_quantize(pc_, 1, return_index=True, return_inverse=True)
+
+        pc = pc_[inds]
+        feat = feat_[inds]
+        labels = labels[inds]
+        num_voxel = len(inds)
+        points = SparseTensor(ref_pc, pc_)
+        ref_index = SparseTensor(ref_index, pc_)
+        map = SparseTensor(inds, pc)
+        lidar = SparseTensor(feat, pc)
+        labels = SparseTensor(labels, pc)
+        labels_mapped = SparseTensor(ref_labels, pc_)
+        inverse_map = SparseTensor(inverse_map, pc_)
+
+        data_dict = {}
+        data_dict['lidar'] = lidar
+        data_dict['points'] = points
+        data_dict['targets'] = labels
+        data_dict['targets_mapped'] = labels_mapped
+        data_dict['ref_index'] = ref_index
+        data_dict['origin_len'] = origin_len
+        data_dict['root'] = root
+        data_dict['map'] = map
+        data_dict['num_voxel'] = num_voxel
+        data_dict['inverse_map'] = inverse_map
+
+        return data_dict
+
+
 @register_collate_fn
 def collate_fn_default(data):
     point_num = [d['point_num'] for d in data]
@@ -729,3 +844,8 @@ def collate_fn_default(data):
         'img_label': torch.cat(img_label, 0).squeeze(1).long(),
         'path': path,
     }
+
+
+@register_collate_fn
+def collate_fn_voxel(inputs):
+    return sparse_collate_fn(inputs)

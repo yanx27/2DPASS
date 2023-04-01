@@ -154,7 +154,7 @@ if __name__ == '__main__':
         os.system('cp dataloader/pc_dataset.py {}'.format(backup_dir))
         os.system('cp {} {}'.format(configs.config_path, backup_dir))
         os.system('cp network/base_model.py {}'.format(backup_dir))
-        os.system('cp network/spvcnn.py {}'.format(backup_dir))
+        os.system('cp network/baseline.py {}'.format(backup_dir))
         os.system('cp {}.py {}'.format('network/' + configs['model_params']['model_architecture'], backup_dir))
 
     # reproducibility
