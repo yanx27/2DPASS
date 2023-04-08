@@ -182,14 +182,18 @@ You can download the models with the scores below from [this Google drive folder
 ### SemanticKITTI
 |Model (validation)|mIoU (vanilla)|mIoU (TTA)|Parameters|
 |:---:|:---:|:---:|:---:|
+|MinkowskiNet|65.1%|67.1%|21.7M|
+|SPVCNN|65.9%|67.8%|21.8M|
 |2DPASS (4scale-64dimension)|68.7%|70.0%|1.9M|
 |2DPASS (6scale-256dimension)|70.7%|72.0%|45.6M|
 
-Here, we fine-tune the model on SemanticKITTI with more epochs and thus gain the higher mIoU. If you train with 64 epochs, it should be gained about 66%/69% for vanilla and 69%/71% after TTA.
+Here, we fine-tune 2DPASS models on SemanticKITTI with more epochs and thus gain the higher mIoU. If you train with 64 epochs, it should be gained about 66%/69% for vanilla and 69%/71% after TTA.
 
 ### NuScenes
 |Model (validation)|mIoU (vanilla)|mIoU (TTA)|Parameters|
 |:---:|:---:|:---:|:---:|
+|MinkowskiNet|74.3%|76.0%|21.7M|
+|SPVCNN|74.9%|76.9%|21.8M|
 |2DPASS (6scale-128dimension)|76.7%|79.6%|11.5M|
 |2DPASS (6scale-256dimension)|78.0%|80.5%|45.6M|
 
