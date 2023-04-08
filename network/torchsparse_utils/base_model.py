@@ -34,11 +34,6 @@ class LightningBaseModel(pl.LightningModule):
                 self.mapfile = yaml.safe_load(stream)
 
         self.ignore_label = self.args['dataset_params']['ignore_label']
-        self.multi2single = False
-        if self.multi2single:
-            with open('config/label_mapping/semantic-kitti-multiscan2singlescan.yaml', 'r') as stream:
-                self.m2s_mapping = yaml.safe_load(stream)['learning_map']
-
 
     def configure_optimizers(self):
         if self.args['train_params']['optimizer'] == 'Adam':
@@ -192,20 +187,12 @@ class LightningBaseModel(pl.LightningModule):
 
         vote_logits.index_add_(0, indices.cpu(), prediction_mapped.cpu())
         prediction = vote_logits.argmax(1)
-        if self.args['dataset_params']['pc_dataset_type'] == 'SemanticKITTI_multiscan':
-            prediction = prediction[:origin_len]
-            raw_labels = raw_labels[:origin_len]
 
         if self.ignore_label != 0:
             prediction = prediction[raw_labels != self.ignore_label]
             raw_labels = raw_labels[raw_labels != self.ignore_label]
             prediction += 1
             raw_labels += 1
-
-        if self.multi2single:
-            valid_labels = np.vectorize(self.m2s_mapping.__getitem__)
-            prediction = torch.Tensor(valid_labels(prediction.numpy().astype(int))).int()
-            raw_labels = torch.Tensor(valid_labels(raw_labels.numpy().astype(int))).int()
 
         if not self.args['submit_to_server']:
             self.val_acc(prediction, raw_labels)
