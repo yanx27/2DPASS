@@ -76,8 +76,7 @@ dataset_params:
 
   train_data_loader:
     data_path: "./dataset/SemanticKitti/dataset/sequences/"
-    # batch_size: 8
-    batch_size: 1
+    batch_size: 8
     shuffle: True
     num_workers: 8
     rotate_aug: True
